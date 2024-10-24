@@ -1,0 +1,308 @@
+// Test cases for each operation
+void testEnqueue() {
+    NovelQueue<CPUJob*>* queue = new NovelQueue<CPUJob*>();
+    CPUJob* job1 = new CPUJob(1, 1, 1, 100, 1000);
+    queue->enqueue(job1);
+    assert(queue->count() == 1);
+}
+
+__________________________________________________________
+// Sample test sequence
+vector<string> testCommands = {
+    "A 101 5 2 150 2000",
+    "P 101 2",
+    "R",
+    "D"
+};
+
+_________________________________________________________
+void debugDisplay(const NovelQueue<CPUJob*>* queue) {
+    cout << "=== Debug Output ===" << endl;
+    cout << "Queue size: " << queue->count() << endl;
+    // Display both linked list and array contents
+}
+
+_________________________________________________________
+#include <iostream>
+#include <queue>
+using namespace std;
+
+// Define a structure to hold job information
+struct Job {
+    int jobID;
+    int priority;
+    int jobType;
+    int cpuTimeConsumed;
+    int memoryConsumed;
+
+    // Constructor to initialize a Job
+    Job(int id, int p, int type, int cpuTime, int mem)
+        : jobID(id), priority(p), jobType(type), cpuTimeConsumed(cpuTime), memoryConsumed(mem) {}
+};
+
+// Function to print the contents of the queue
+void printQueue(queue<Job> jobQueue) {
+    if (jobQueue.empty()) {
+        cout << "The queue is empty." << endl;
+        return;
+    }
+
+    cout << "Current jobs in the queue:" << endl;
+    // Traverse through the temporary queue
+    while (!jobQueue.empty()) {
+        Job job = jobQueue.front();
+        cout << "Job ID: " << job.jobID 
+             << ", Priority: " << job.priority 
+             << ", Job Type: " << job.jobType 
+             << ", CPU Time Consumed: " << job.cpuTimeConsumed 
+             << ", Memory Consumed: " << job.memoryConsumed << endl;
+        jobQueue.pop(); // Remove the job from the temporary queue
+    }
+}
+
+int main() {
+    char command;
+    queue<Job> jobQueue; // Create a queue to hold Job objects
+    int m = 0;
+
+    while (m < 5) {
+        m++;
+        cin >> command; // Read the command type
+
+        switch (command) {
+            case 'A': { // Add (Enqueue)
+                int n1, n2, n3, n4, n5;
+                cin >> n1 >> n2 >> n3; // Read job ID, priority, and job type
+                cin >> n4 >> n5; // Read CPU time consumed and memory consumed
+
+                // Create a new Job and enqueue it
+                Job newJob(n1, n2, n3, n4, n5);
+                jobQueue.push(newJob);
+                
+                cout << "Job ID: " << newJob.jobID 
+                     << ", Priority: " << newJob.priority 
+                     << ", Job Type: " << newJob.jobType 
+                     << ", CPU Time Consumed: " << newJob.cpuTimeConsumed 
+                     << ", Memory Consumed: " << newJob.memoryConsumed << endl;
+
+                break;
+            }
+            case 'R': { // Remove (Dequeue)
+                if (!jobQueue.empty()) {
+                    Job removedJob = jobQueue.front(); // Get the job at the front
+                    jobQueue.pop(); // Remove the job from the queue
+                    cout << "Removed Job ID: " << removedJob.jobID << endl; // Display removed job ID
+                } else {
+                    cout << "Queue is empty. No job to remove." << endl;
+                }
+                break;
+            }
+            case 'P': { // Print the queue
+                printQueue(jobQueue);
+                break;
+            }
+            default:
+                cout << "Invalid command!" << endl;
+        }
+    }
+    
+    return 0;
+}
+____________________________________________________________________________
+#include <iostream>
+using namespace std;
+
+// CPUJob class definition
+class CPUJob {
+public:
+    int job_id;
+    int priority;
+    int job_type;
+    int cpu_time_consumed;
+    int memory_consumed;
+
+    CPUJob(int id, int prio, int type, int cpu_time, int memory)
+        : job_id(id), priority(prio), job_type(type), cpu_time_consumed(cpu_time), memory_consumed(memory) {}
+
+    void display() {
+        cout << "Job ID: " << job_id
+             << ", Priority: " << priority
+             << ", Job Type: " << job_type
+             << ", CPU Time Consumed: " << cpu_time_consumed
+             << ", Memory Consumed: " << memory_consumed << endl;
+    }
+};
+
+// Queue node class definition
+template <class DT>
+class Queue {
+public:
+    DT JobPointer;
+    Queue* next;
+
+    // The constructor should take DT (which will be CPUJob* in our case)
+    Queue(DT job) : JobPointer(job), next(nullptr) {}
+};
+
+// NovelQueue class definition
+template <class DT>
+class NovelQueue {
+public:
+    Queue<DT>* front;
+    Queue<DT>** NodePtrs;
+    int size;
+
+    NovelQueue() : front(nullptr), NodePtrs(nullptr), size(0) {}
+
+    // Enqueue method to add a job to the queue
+    void enqueue(DT job) {
+        Queue<DT>* newNode = new Queue<DT>(job);
+
+        if (!front) {
+            front = newNode;
+        } else {
+            Queue<DT>* temp = front;
+            while (temp->next) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+        }
+        size++;
+    }
+
+    // Dequeue method to remove and return the first job from the queue
+    DT dequeue() {
+        if (!front) return nullptr;  // If the queue is empty, return nullptr
+
+        Queue<DT>* temp = front;
+        front = front->next;
+
+        DT job = temp->JobPointer;  // This is now correctly of type 'DT' (which is 'CPUJob*')
+        delete temp;
+        size--;
+
+        return job;
+    }
+
+    // Placeholder for the 'modify' function
+    void modify(int job_id, int new_priority, int new_job_type, int new_cpu_time_consumed, int new_memory_consumed) {
+        // Implement logic to modify the job with the given job_id
+    }
+
+    // Placeholder for the 'change' function
+    void change(int job_id, int field_index, int new_value) {
+        // Implement logic to change a specific field of a job
+    }
+
+    // Placeholder for the 'promote' function
+    void promote(int job_id, int positions) {
+        // Implement logic to promote a job within the queue
+    }
+
+    // Placeholder for the 'display' function
+    void display() {
+        Queue<DT>* temp = front;
+        while (temp) {
+            temp->JobPointer->display();  // Assuming CPUJob has a 'display' function
+            temp = temp->next;
+        }
+    }
+
+    // Placeholder for the 'count' function
+    int count() {
+        return size;
+    }
+
+    // Placeholder for the 'listJobs' function
+    void listJobs() {
+        display();  // This can be similar to display, but perhaps with extra formatting
+    }
+
+    // Placeholder for the 'reorder' function
+    NovelQueue<DT>* reorder(int attribute_index) {
+        // Implement reordering logic based on the attribute_index (priority, job_type, etc.)
+        return this;
+    }
+};
+
+// Main function
+int main() {
+    int n;
+    cin >> n;
+
+    NovelQueue<CPUJob*>* myNovelQueue = new NovelQueue<CPUJob*>();
+    char command;
+
+    int job_id, priority, job_type, cpu_time_consumed, memory_consumed;
+    int new_priority, new_job_type, new_cpu_time_consumed, new_memory_consumed;
+    int field_index, new_value;
+    int positions;
+    int attribute_index;
+
+    for (int i = 0; i < n; ++i) {
+        cin >> command;
+
+        switch (command) {
+            case 'A': {  // Add a new job
+                cin >> job_id >> priority >> job_type >> cpu_time_consumed >> memory_consumed;
+                CPUJob* newJob = new CPUJob(job_id, priority, job_type, cpu_time_consumed, memory_consumed);
+                myNovelQueue->enqueue(newJob);
+                break;
+            }
+            case 'R': {  // Remove the first job from the queue
+                CPUJob* removedJob = myNovelQueue->dequeue();
+                if (removedJob) {
+                    cout << "Dequeued Job: ";
+                    removedJob->display();
+                    delete removedJob;
+                }
+                break;
+            }
+            case 'M': {  // Modify an existing job
+                cin >> job_id >> new_priority >> new_job_type >> new_cpu_time_consumed >> new_memory_consumed;
+                myNovelQueue->modify(job_id, new_priority, new_job_type, new_cpu_time_consumed, new_memory_consumed);
+                break;
+            }
+            case 'C': {  // Change a specific field of a job
+                cin >> job_id >> field_index >> new_value;
+                myNovelQueue->change(job_id, field_index, new_value);
+                break;
+            }
+            case 'P': {  // Promote a job within the queue
+                cin >> job_id >> positions;
+                myNovelQueue->promote(job_id, positions);
+                break;
+            }
+            case 'O': {  // Reorder the queue based on a specific attribute
+                cin >> attribute_index;
+                NovelQueue<CPUJob*>* reorderedQueue = myNovelQueue->reorder(attribute_index);
+                cout << "Reordered Queue:" << endl;
+                reorderedQueue->display();
+                break;
+            }
+            case 'D': {  // Display all jobs in the queue
+                myNovelQueue->display();
+                break;
+            }
+            case 'N': {  // Display the number of jobs in the queue
+                cout << "Number of elements in the queue: " << myNovelQueue->count() << endl;
+                break;
+            }
+            case 'L': {  // List all jobs in the queue
+                myNovelQueue->listJobs();
+                break;
+            }
+            default:
+                cout << "Invalid command!" << endl;
+        }
+    }
+
+    delete myNovelQueue;
+    return 0;
+}
+
+____________________________________________________________________________
+
+
+
+
