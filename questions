@@ -1,0 +1,10 @@
+how to move an object in a queue to another location in the same queue in C++
+I chose this prompt so that I could understand how to implement the Promote method
+
+How to find a specific element in a queue in C++
+I chose this prompt so that I could use the Job ID to place it under the think 
+ex) Promoted Job ID 103 by 2 Position(s): 
+(Job ID: 103, Priority: 7, Job Type: 4, CPU Time Consumed: 250, Memory Consumed: 4096) ← this
+
+
+
